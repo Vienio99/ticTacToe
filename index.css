@@ -1,7 +1,22 @@
 html, body {
-    height: 100%;
-    font-family: 'Chelsea Market', cursive;
-    background-color: rgb(180, 134, 65);
+    height: 99%;
+    font-family: 'Luckiest Guy', cursive;
+    background-color: rgb(92, 175, 161);
+    color:rgb(226, 223, 12);
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 99%;
+    height: 11rem;
+    text-align: center;
 }
 
 h1 {
@@ -16,7 +31,7 @@ h1 {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-gap: 7px;
-    background-color: black;
+    background-color: rgb(49, 49, 49);
 }
 .game-board .square {
     width: 100%;
@@ -24,16 +39,20 @@ h1 {
     text-align: center;
     cursor: pointer;
     position: relative;
-    background-color: rgb(180, 134, 65);
+    background-color: rgb(92, 175, 161);
 }
 
 .text {
     position: absolute;
-    top: 10%;
+    top: 25%;
     left: 20%;
     bottom: 20%;
     right: 20%;
     text-align: center;
     font-size: 5vw;
-    color: black;
+    color:rgb(49, 49, 49);
+}
+
+img {
+    width: 10%;
 }
