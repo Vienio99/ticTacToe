@@ -10,16 +10,32 @@ const Player = (username, mark) => {
     return { getUsername, getMark }
 }
 
-const flowControl = () => {
+const flowControl = (() => {
+    const squares = document.getElementsByClassName('square');
 
-}
+    const player1 = Player('Player1', 'X');
+    const player2 = Player('Player2', 'O');
+    const markP1 = player1.getMark();
+    const markP2 = player2.getMark();
+    let currentMark = markP1;
+    console.log(squares)
 
-const squares = document.querySelectorAll('.square');
+    Array.from(squares).forEach((square) => {
+        square.addEventListener('click', () => {
+            const chosenSquare = document.getElementById(`${square.id}`);
 
-squares.forEach((square) => {
-    square.addEventListener('click', () => {
-        const chosenSquare = document.querySelector(`#${square.id} div`);
-        chosenSquare.textContent = 'X'
-        console.log(chosenSquare.id)
+            switch (currentMark) {
+                case markP1:
+                    chosenSquare.firstElementChild.textContent = markP1;
+                    currentMark = markP2;
+                    break;
+                case markP2:
+                    chosenSquare.firstElementChild.textContent = markP2;
+                    currentMark = markP1;
+                    break;
+            }
+        })
     })
-})
+
+
+})();
