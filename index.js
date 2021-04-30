@@ -59,8 +59,9 @@ const flowControl = (() => {
 
     restart.addEventListener('click', () => {
         gameBoard.clearAll();
+        currentMark = markP1;
     })
-    
+
     const squares = document.getElementsByClassName('square');
 
     const player1 = Player('Player1', 'X');
