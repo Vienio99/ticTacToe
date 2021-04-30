@@ -1,5 +1,6 @@
 const gameBoard = (() => {
     let board = {};
+    const winnerTextBox = document.querySelector('.end-info');
 
     const populateBoard = (field, mark) => {
         board[field] = mark;
@@ -14,8 +15,9 @@ const gameBoard = (() => {
             board[1] === mark && board[5] === mark && board[9] === mark ||
             board[3] === mark && board[6] === mark && board[9] === mark
             ) {
-                alert(`The winner is ${player.getUsername()} !!`);
-                clearBoard();
+                displayWinner(player.getUsername());
+            } else if (Object.keys(board).length === 9) {
+                displayWinner();
             };
     };
 
@@ -27,7 +29,20 @@ const gameBoard = (() => {
         board = {};
     }
 
-    return { board, populateBoard, checkEnd };
+    const displayWinner = (winner) => {
+        if (winner === 'Player1' || winner === 'Player2') {
+            winnerTextBox.textContent = `${winner} wins!!`;
+        } else {
+            winnerTextBox.textContent = "It's a tie!";
+        }
+    }
+
+
+    const clearAll = () => {
+        clearBoard();
+        winnerTextBox.textContent = '';
+    }
+    return { board, populateBoard, checkEnd, clearAll };
 })();
 
 
@@ -39,6 +54,7 @@ const Player = (username, mark) => {
 }
 
 const flowControl = (() => {
+    gameBoard.clearAll();
     const squares = document.getElementsByClassName('square');
 
     const player1 = Player('Player1', 'X');
@@ -50,6 +66,10 @@ const flowControl = (() => {
 
     Array.from(squares).forEach((square) => {
         square.addEventListener('click', () => {
+            if (document.querySelector('.end-info').textContent) {
+                gameBoard.clearAll();
+                currentMark = markP1;
+            }
             const chosenSquare = document.getElementById(`${square.id}`);
             let squareTextBox = chosenSquare.firstElementChild;
 
