@@ -42,7 +42,7 @@ const gameBoard = (() => {
         clearBoard();
         winnerTextBox.textContent = '';
     }
-    return { board, populateBoard, checkEnd, clearAll };
+    return { populateBoard, checkEnd, clearAll };
 })();
 
 
@@ -55,6 +55,12 @@ const Player = (username, mark) => {
 
 const flowControl = (() => {
     gameBoard.clearAll();
+    const restart = document.querySelector('.restart button');
+
+    restart.addEventListener('click', () => {
+        gameBoard.clearAll();
+    })
+    
     const squares = document.getElementsByClassName('square');
 
     const player1 = Player('Player1', 'X');
