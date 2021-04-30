@@ -5,10 +5,28 @@ const gameBoard = (() => {
         board[field] = mark;
     };
 
-    const checkEnd = () => {
+    const checkEnd = (mark, player) => {
+        if (board[1] === mark && board[2] === mark && board[3] === mark ||
+            board[4] === mark && board[5] === mark && board[6] === mark ||
+            board[7] === mark && board[8] === mark && board[9] === mark ||
+            board[1] === mark && board[4] === mark && board[7] === mark ||
+            board[2] === mark && board[5] === mark && board[8] === mark ||
+            board[1] === mark && board[5] === mark && board[9] === mark ||
+            board[3] === mark && board[6] === mark && board[9] === mark
+            ) {
+                alert(`The winner is ${player.getUsername()} !!`);
+                clearBoard();
+            };
+    };
 
+    const clearBoard = () => {
+        const squares = document.getElementsByClassName('square');
+        Array.from(squares).forEach((square) => {
+            square.firstElementChild.textContent = '';
+        })
+        board = {};
     }
-    
+
     return { board, populateBoard, checkEnd };
 })();
 
@@ -39,10 +57,12 @@ const flowControl = (() => {
                 squareTextBox.textContent = markP1;
                 gameBoard.populateBoard(square.id, markP1);
                 currentMark = markP2;
+                gameBoard.checkEnd(markP1, player1);
             } else if (currentMark === markP2 && !squareTextBox.textContent) {
                 squareTextBox.textContent = markP2;
                 gameBoard.populateBoard(square.id, markP2);
                 currentMark = markP1;
+                gameBoard.checkEnd(markP2, player2);
             }
         })
     })
