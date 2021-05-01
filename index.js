@@ -1,9 +1,11 @@
 const gameBoard = (() => {
     let board = {};
     const winnerTextBox = document.querySelector('.end-info');
+    const modalBox = document.querySelector('.modal');
 
-    const populateBoard = (field, mark) => {
+    const populateBoard = (field, mark, textBox) => {
         board[field] = mark;
+        textBox.textContent = mark;
     };
 
     const checkEnd = (mark, player) => {
@@ -35,13 +37,16 @@ const gameBoard = (() => {
         } else {
             winnerTextBox.textContent = "It's a tie!";
         }
+        modalBox.style.display = "block";
     }
 
 
     const clearAll = () => {
         clearBoard();
         winnerTextBox.textContent = '';
+        modalBox.style.display = "none";
     }
+
     return { populateBoard, checkEnd, clearAll };
 })();
 
@@ -55,6 +60,16 @@ const Player = (username, mark) => {
 
 const flowControl = (() => {
     gameBoard.clearAll();
+
+    const modalBox = document.querySelector('.modal');
+    window.addEventListener('click', function(e) {
+        if (e.target == modalBox) {
+            modalBox.style.display = 'none';
+            gameBoard.clearAll();
+            currentMark = markP1;
+        }
+    });
+
     const restart = document.querySelector('.restart button');
 
     restart.addEventListener('click', () => {
@@ -62,14 +77,14 @@ const flowControl = (() => {
         currentMark = markP1;
     })
 
-    const squares = document.getElementsByClassName('square');
-
     const player1 = Player('Player1', 'X');
     const player2 = Player('Player2', 'O');
 
     const markP1 = player1.getMark();
     const markP2 = player2.getMark();
     let currentMark = markP1;
+
+    const squares = document.getElementsByClassName('square');
 
     Array.from(squares).forEach((square) => {
         square.addEventListener('click', () => {
@@ -81,15 +96,13 @@ const flowControl = (() => {
             let squareTextBox = chosenSquare.firstElementChild;
 
             if (currentMark === markP1 && !squareTextBox.textContent) {
-                squareTextBox.textContent = markP1;
-                gameBoard.populateBoard(square.id, markP1);
-                currentMark = markP2;
+                gameBoard.populateBoard(square.id, markP1, squareTextBox);
                 gameBoard.checkEnd(markP1, player1);
+                currentMark = markP2;
             } else if (currentMark === markP2 && !squareTextBox.textContent) {
-                squareTextBox.textContent = markP2;
-                gameBoard.populateBoard(square.id, markP2);
-                currentMark = markP1;
+                gameBoard.populateBoard(square.id, markP2, squareTextBox);
                 gameBoard.checkEnd(markP2, player2);
+                currentMark = markP1;
             }
         })
     })
