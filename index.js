@@ -32,7 +32,7 @@ const gameBoard = (() => {
     }
 
     const displayWinner = (winner) => {
-        if (winner === 'Player1' || winner === 'Player2') {
+        if (winner === 'Player1' || winner === 'Computer') {
             winnerTextBox.textContent = `${winner} wins!!`;
         } else {
             winnerTextBox.textContent = "It's a tie!";
@@ -59,7 +59,6 @@ const Player = (username, mark) => {
 }
 
 const flowControl = (() => {
-    gameBoard.clearAll();
 
     const modalBox = document.querySelector('.modal');
     window.addEventListener('click', function(e) {
@@ -78,7 +77,7 @@ const flowControl = (() => {
     })
 
     const player1 = Player('Player1', 'X');
-    const player2 = Player('Player2', 'O');
+    const player2 = Player('Computer', 'O');
 
     const markP1 = player1.getMark();
     const markP2 = player2.getMark();
@@ -99,6 +98,7 @@ const flowControl = (() => {
                 gameBoard.populateBoard(square.id, markP1, squareTextBox);
                 gameBoard.checkEnd(markP1, player1);
                 currentMark = markP2;
+                setTimeout(computerMove, 1000);
             } else if (currentMark === markP2 && !squareTextBox.textContent) {
                 gameBoard.populateBoard(square.id, markP2, squareTextBox);
                 gameBoard.checkEnd(markP2, player2);
@@ -106,6 +106,23 @@ const flowControl = (() => {
             }
         })
     })
-
-
 })();
+
+
+const computerMove = () => {
+    const endInfoText = document.querySelector('.end-info').textContent
+    if (!endInfoText) {
+        const squares = document.getElementsByClassName('square');
+        let randomInt = getRandomInt(0, 8);
+        while (squares[randomInt].firstElementChild.textContent && !endInfoText) {
+            randomInt = getRandomInt(0, 8);
+        }
+        squares[randomInt].firstElementChild.click();
+        console.log(squares[randomInt])
+    }
+
+}
+
+const getRandomInt = (min, max) => {
+    return Math.floor(Math.random() * (max - min + 1) + min);  
+}
