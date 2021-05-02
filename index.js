@@ -1,11 +1,16 @@
+// Gameboard with it's functions
 const gameBoard = (() => {
-    let board = {};
+    let board = { 1: '', 2: '', 3: '',
+                    4: '', 5: '', 6: '',
+                    7: '', 8: '', 9: '' };
+
     const winnerTextBox = document.querySelector('.end-info');
     const modalBox = document.querySelector('.modal');
 
     const populateBoard = (field, mark, textBox) => {
         board[field] = mark;
         textBox.textContent = mark;
+        console.log(board)
     };
 
     const checkEnd = (mark, player) => {
@@ -20,7 +25,7 @@ const gameBoard = (() => {
             board[3] === mark && board[5] === mark && board[7] === mark 
             ) {
                 displayWinner(player.getUsername());
-            } else if (Object.keys(board).length === 9) {
+            } else if (!anyAvailableMoves()) {
                 displayWinner();
             };
     };
@@ -30,7 +35,9 @@ const gameBoard = (() => {
         Array.from(squares).forEach((square) => {
             square.firstElementChild.textContent = '';
         })
-        board = {};
+        board = { 1: '', 2: '', 3: '',
+                    4: '', 5: '', 6: '',
+                    7: '', 8: '', 9: ''  };
     }
 
     const displayWinner = (winner) => {
@@ -49,7 +56,7 @@ const gameBoard = (() => {
         modalBox.style.display = "none";
     }
 
-    const checkStatus = () => {
+    const checkGameStatus = () => {
         if (winnerTextBox.textContent === '') {
             return 'inProgress';
         } else {
@@ -57,17 +64,26 @@ const gameBoard = (() => {
         }
     }
 
-    return { populateBoard, checkEnd, clearAll, checkStatus };
+    const anyAvailableMoves = () => {
+        for (let i = 0; i < Object.keys(board).length; i++) {
+            if (board[i] === '') {
+                return true;
+            }
+        }
+    }
+
+    return { populateBoard, checkEnd, clearAll, checkGameStatus, anyAvailableMoves };
 })();
 
 
-
+// Player factory function
 const Player = (username, mark) => {
     const getUsername = () => username;
     const getMark = () => mark;
     return { getUsername, getMark }
 }
 
+// Flow control of the game
 const flowControl = (() => {
 
     // Modal box after finishing the game
@@ -100,7 +116,7 @@ const flowControl = (() => {
 
     Array.from(squares).forEach((square) => {
         square.addEventListener('click', () => {
-            if (document.querySelector('.end-info').textContent) {
+            if (!gameBoard.anyAvailableMoves()) {
                 gameBoard.clearAll();
                 currentMark = markP1;
             }
@@ -111,8 +127,8 @@ const flowControl = (() => {
                 gameBoard.populateBoard(square.id, markP1, squareTextBox);
                 gameBoard.checkEnd(markP1, player1);
                 currentMark = markP2;
-                if (gameBoard.checkStatus() === 'inProgress') {
-                    setTimeout(computerMove, 1000);
+                if (gameBoard.checkGameStatus() === 'inProgress') {
+                    setTimeout(computerPlayer.move, 1000);
                 }
             } else if (currentMark === markP2 && !squareTextBox.textContent) {
                 gameBoard.populateBoard(square.id, markP2, squareTextBox);
@@ -123,20 +139,53 @@ const flowControl = (() => {
     })
 })();
 
+// Computer player logic
 
-const computerMove = () => {
-    const endInfoText = document.querySelector('.end-info').textContent
-    if (!endInfoText) {
-        const squares = document.getElementsByClassName('square');
-        let randomInt = getRandomInt(0, 8);
-        while (squares[randomInt].firstElementChild.textContent && !endInfoText) {
-            randomInt = getRandomInt(0, 8);
+const computerPlayer = (() => {
+    const move = () => {
+        if (gameBoard.anyAvailableMoves()) {
+            const squares = document.getElementsByClassName('square');
+            let randomInt = getRandomInt(0, 8);
+            while (squares[randomInt].firstElementChild.textContent) {
+                randomInt = getRandomInt(0, 8);
+            }
+            squares[randomInt].firstElementChild.click();
         }
-        squares[randomInt].firstElementChild.click();
+    
     }
+    
+    const getRandomInt = (min, max) => {
+        return Math.floor(Math.random() * (max - min + 1) + min);  
+    }
+    return { move }
+})();
 
-}
+// // Minmax algorithm
+// function minimax(position, depth, maximizingPlayer) {
+//     if (depth === 0) {
+//         return position;
+//     } 
+//     if (maximizingPlayer) {
+//         let maxEval = -Infinity;
+//         for (let i = 0; i < position.length; i++) {
+//             evaluation = minimax(position[i], depth - 1, false);
+//             maxEval = Math.max(maxEval, evaluation);
+//         }
+//         return maxEval;
+//     }
 
-const getRandomInt = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1) + min);  
-}
+//     else {
+//         let minEval = Infinity;
+//         for (let i = 0; i < position.length; i++) {
+//             evaluation = minimax(position[i], depth - 1, true);
+//             maxEval = Math.min(minEval, evaluation);
+//         }
+//         return minEval
+//     }
+// }
+
+// function findBestMove(board) {
+//     bestMove = 0;
+//     for each move in board
+
+// }
