@@ -9,13 +9,15 @@ const gameBoard = (() => {
     };
 
     const checkEnd = (mark, player) => {
+        console.log(board)
         if (board[1] === mark && board[2] === mark && board[3] === mark ||
             board[4] === mark && board[5] === mark && board[6] === mark ||
             board[7] === mark && board[8] === mark && board[9] === mark ||
             board[1] === mark && board[4] === mark && board[7] === mark ||
             board[2] === mark && board[5] === mark && board[8] === mark ||
             board[1] === mark && board[5] === mark && board[9] === mark ||
-            board[3] === mark && board[6] === mark && board[9] === mark
+            board[3] === mark && board[6] === mark && board[9] === mark ||
+            board[3] === mark && board[5] === mark && board[7] === mark 
             ) {
                 displayWinner(player.getUsername());
             } else if (Object.keys(board).length === 9) {
@@ -47,7 +49,15 @@ const gameBoard = (() => {
         modalBox.style.display = "none";
     }
 
-    return { populateBoard, checkEnd, clearAll };
+    const checkStatus = () => {
+        if (winnerTextBox.textContent === '') {
+            return 'inProgress';
+        } else {
+            return 'end';
+        }
+    }
+
+    return { populateBoard, checkEnd, clearAll, checkStatus };
 })();
 
 
@@ -60,6 +70,7 @@ const Player = (username, mark) => {
 
 const flowControl = (() => {
 
+    // Modal box after finishing the game
     const modalBox = document.querySelector('.modal');
     window.addEventListener('click', function(e) {
         if (e.target == modalBox) {
@@ -69,13 +80,14 @@ const flowControl = (() => {
         }
     });
 
+    // Restart button
     const restart = document.querySelector('.restart button');
-
     restart.addEventListener('click', () => {
         gameBoard.clearAll();
         currentMark = markP1;
     })
 
+    // Setting players
     const player1 = Player('Player1', 'X');
     const player2 = Player('Computer', 'O');
 
@@ -83,6 +95,7 @@ const flowControl = (() => {
     const markP2 = player2.getMark();
     let currentMark = markP1;
 
+    // Listening for moves
     const squares = document.getElementsByClassName('square');
 
     Array.from(squares).forEach((square) => {
@@ -98,7 +111,9 @@ const flowControl = (() => {
                 gameBoard.populateBoard(square.id, markP1, squareTextBox);
                 gameBoard.checkEnd(markP1, player1);
                 currentMark = markP2;
-                setTimeout(computerMove, 1000);
+                if (gameBoard.checkStatus() === 'inProgress') {
+                    setTimeout(computerMove, 1000);
+                }
             } else if (currentMark === markP2 && !squareTextBox.textContent) {
                 gameBoard.populateBoard(square.id, markP2, squareTextBox);
                 gameBoard.checkEnd(markP2, player2);
@@ -118,7 +133,6 @@ const computerMove = () => {
             randomInt = getRandomInt(0, 8);
         }
         squares[randomInt].firstElementChild.click();
-        console.log(squares[randomInt])
     }
 
 }
