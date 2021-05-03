@@ -1,3 +1,5 @@
+const gameBoardContent = document.querySelector('.game-board');
+
 // Gameboard with it's functions
 const gameBoard = (() => {
     let board = { 1: '', 2: '', 3: '',
@@ -10,11 +12,9 @@ const gameBoard = (() => {
     const populateBoard = (field, mark, textBox) => {
         board[field] = mark;
         textBox.textContent = mark;
-        console.log(board)
     };
 
     const checkEnd = (mark, player) => {
-        console.log(board)
         if (board[1] === mark && board[2] === mark && board[3] === mark ||
             board[4] === mark && board[5] === mark && board[6] === mark ||
             board[7] === mark && board[8] === mark && board[9] === mark ||
@@ -65,14 +65,14 @@ const gameBoard = (() => {
     }
 
     const anyAvailableMoves = () => {
-        for (let i = 0; i < Object.keys(board).length; i++) {
+        for (let i = 0; i < Object.keys(board).length + 1; i++) {
             if (board[i] === '') {
                 return true;
             }
         }
     }
 
-    return { populateBoard, checkEnd, clearAll, checkGameStatus, anyAvailableMoves };
+    return { populateBoard, checkEnd, clearAll, checkGameStatus, anyAvailableMoves, board };
 })();
 
 
@@ -116,6 +116,7 @@ const flowControl = (() => {
 
     Array.from(squares).forEach((square) => {
         square.addEventListener('click', () => {
+
             if (!gameBoard.anyAvailableMoves()) {
                 gameBoard.clearAll();
                 currentMark = markP1;
@@ -124,10 +125,12 @@ const flowControl = (() => {
             let squareTextBox = chosenSquare.firstElementChild;
 
             if (currentMark === markP1 && !squareTextBox.textContent) {
+                gameBoardContent.style.pointerEvents = 'auto';
                 gameBoard.populateBoard(square.id, markP1, squareTextBox);
                 gameBoard.checkEnd(markP1, player1);
                 currentMark = markP2;
                 if (gameBoard.checkGameStatus() === 'inProgress') {
+                    gameBoardContent.style.pointerEvents = 'none';
                     setTimeout(computerPlayer.move, 1000);
                 }
             } else if (currentMark === markP2 && !squareTextBox.textContent) {
@@ -141,22 +144,39 @@ const flowControl = (() => {
 
 // Computer player logic
 
+// const computerPlayer = (() => {
+//     const move = () => {
+//         if (gameBoard.anyAvailableMoves()) {
+//             const squares = document.getElementsByClassName('square');
+//             let randomInt = getRandomInt(0, 8);
+//             while (squares[randomInt].firstElementChild.textContent) {
+//                 randomInt = getRandomInt(0, 8);
+//             }
+//             squares[randomInt].firstElementChild.click();
+//         }
+    
+//     }
+    
+//     const getRandomInt = (min, max) => {
+//         return Math.floor(Math.random() * (max - min + 1) + min);  
+//     }
+//     return { move }
+// })();
+
+
+// Computer player minimax
 const computerPlayer = (() => {
     const move = () => {
         if (gameBoard.anyAvailableMoves()) {
             const squares = document.getElementsByClassName('square');
-            let randomInt = getRandomInt(0, 8);
-            while (squares[randomInt].firstElementChild.textContent) {
-                randomInt = getRandomInt(0, 8);
-            }
-            squares[randomInt].firstElementChild.click();
-        }
-    
-    }
-    
-    const getRandomInt = (min, max) => {
-        return Math.floor(Math.random() * (max - min + 1) + min);  
-    }
+            for (let i = 0; i < Object.keys(gameBoard.board).length; i++) {
+                console.log(gameBoard.board)
+                if (gameBoard.board[i + 1] === '') {
+                    squares[i].click();
+                    gameBoardContent.style.pointerEvents = 'auto';
+                    break;
+                }
+        }}}
     return { move }
 })();
 
@@ -184,8 +204,4 @@ const computerPlayer = (() => {
 //     }
 // }
 
-// function findBestMove(board) {
-//     bestMove = 0;
-//     for each move in board
-
-// }
+// console.log(minimax([1, 2, 3, 4, 5, 6, 7, 8], 1, true))
