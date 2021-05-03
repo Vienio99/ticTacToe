@@ -1,13 +1,14 @@
+// Global variables
 const gameBoardContent = document.querySelector('.game-board');
+const modalBox = document.querySelector('.modal');
+let board = { 1: '', 2: '', 3: '',
+            4: '', 5: '', 6: '',
+            7: '', 8: '', 9: '' };
 
 // Gameboard with it's functions
 const gameBoard = (() => {
-    let board = { 1: '', 2: '', 3: '',
-                    4: '', 5: '', 6: '',
-                    7: '', 8: '', 9: '' };
 
     const winnerTextBox = document.querySelector('.end-info');
-    const modalBox = document.querySelector('.modal');
 
     const populateBoard = (field, mark, textBox) => {
         board[field] = mark;
@@ -87,7 +88,6 @@ const Player = (username, mark) => {
 const flowControl = (() => {
 
     // Modal box after finishing the game
-    const modalBox = document.querySelector('.modal');
     window.addEventListener('click', function(e) {
         if (e.target == modalBox) {
             modalBox.style.display = 'none';
@@ -169,9 +169,9 @@ const computerPlayer = (() => {
     const move = () => {
         if (gameBoard.anyAvailableMoves()) {
             const squares = document.getElementsByClassName('square');
-            for (let i = 0; i < Object.keys(gameBoard.board).length; i++) {
-                console.log(gameBoard.board)
-                if (gameBoard.board[i + 1] === '') {
+            for (let i = 0; i < Object.keys(board).length; i++) {
+                console.log(board)
+                if (board[i + 1] === '') {
                     squares[i].click();
                     gameBoardContent.style.pointerEvents = 'auto';
                     break;
