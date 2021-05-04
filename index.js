@@ -1,29 +1,33 @@
 // Global variables
 const gameBoardContent = document.querySelector('.game-board');
 const modalBox = document.querySelector('.modal');
-let board = { 1: '', 2: '', 3: '',
-            4: '', 5: '', 6: '',
-            7: '', 8: '', 9: '' };
+
 
 // Gameboard with it's functions
 const gameBoard = (() => {
+    const self = this;
+    this.board = { 1: '', 2: '', 3: '',
+            4: '', 5: '', 6: '',
+            7: '', 8: '', 9: '' };
+
+
 
     const winnerTextBox = document.querySelector('.end-info');
 
     const populateBoard = (field, mark, textBox) => {
-        board[field] = mark;
+        self.board[field] = mark;
         textBox.textContent = mark;
     };
 
     const checkEnd = (mark, player) => {
-        if (board[1] === mark && board[2] === mark && board[3] === mark ||
-            board[4] === mark && board[5] === mark && board[6] === mark ||
-            board[7] === mark && board[8] === mark && board[9] === mark ||
-            board[1] === mark && board[4] === mark && board[7] === mark ||
-            board[2] === mark && board[5] === mark && board[8] === mark ||
-            board[1] === mark && board[5] === mark && board[9] === mark ||
-            board[3] === mark && board[6] === mark && board[9] === mark ||
-            board[3] === mark && board[5] === mark && board[7] === mark 
+        if (self.board[1] === mark && self.board[2] === mark && self.board[3] === mark ||
+            self.board[4] === mark && self.board[5] === mark && self.board[6] === mark ||
+            self.board[7] === mark && self.board[8] === mark && self.board[9] === mark ||
+            self.board[1] === mark && self.board[4] === mark && self.board[7] === mark ||
+            self.board[2] === mark && self.board[5] === mark && self.board[8] === mark ||
+            self.board[1] === mark && self.board[5] === mark && self.board[9] === mark ||
+            self.board[3] === mark && self.board[6] === mark && self.board[9] === mark ||
+            self.board[3] === mark && self.board[5] === mark && self.board[7] === mark 
             ) {
                 displayWinner(player.getUsername());
             } else if (!anyAvailableMoves()) {
@@ -31,12 +35,13 @@ const gameBoard = (() => {
             };
     };
 
+
     const clearBoard = () => {
         const squares = document.getElementsByClassName('square');
         Array.from(squares).forEach((square) => {
             square.firstElementChild.textContent = '';
         })
-        board = { 1: '', 2: '', 3: '',
+        self.board = { 1: '', 2: '', 3: '',
                     4: '', 5: '', 6: '',
                     7: '', 8: '', 9: ''  };
     }
@@ -66,17 +71,17 @@ const gameBoard = (() => {
     }
 
     const anyAvailableMoves = () => {
-        for (let i = 0; i < Object.keys(board).length + 1; i++) {
-            if (board[i] === '') {
+        for (let i = 0; i < Object.keys(self.board).length + 1; i++) {
+            if (self.board[i] === '') {
                 return true;
             }
         }
     }
 
-    return { populateBoard, checkEnd, clearAll, checkGameStatus, anyAvailableMoves, board };
+    return { populateBoard, checkEnd, clearAll, checkGameStatus, anyAvailableMoves, self };
 })();
 
-
+console.log(gameBoard.board)
 // Player factory function
 const Player = (username, mark) => {
     const getUsername = () => username;
@@ -169,9 +174,9 @@ const computerPlayer = (() => {
     const move = () => {
         if (gameBoard.anyAvailableMoves()) {
             const squares = document.getElementsByClassName('square');
-            for (let i = 0; i < Object.keys(board).length; i++) {
-                console.log(board)
-                if (board[i + 1] === '') {
+            for (let i = 0; i < Object.keys(gameBoard.self.board).length; i++) {
+                console.log(gameBoard.self.board)
+                if (gameBoard.self.board[i + 1] === '') {
                     squares[i].click();
                     gameBoardContent.style.pointerEvents = 'auto';
                     break;
