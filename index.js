@@ -1,8 +1,3 @@
-// Global variables
-const gameBoardContent = document.querySelector('.game-board');
-const modalBox = document.querySelector('.modal');
-
-
 // Gameboard with it's functions
 const gameBoard = (() => {
     const self = this;
@@ -46,6 +41,7 @@ const gameBoard = (() => {
                     7: '', 8: '', 9: ''  };
     }
 
+    const modalBox = document.querySelector('.modal');
     const displayWinner = (winner) => {
         if (winner === 'Player1' || winner === 'Computer') {
             winnerTextBox.textContent = `${winner} wins!!`;
@@ -91,7 +87,7 @@ const Player = (username, mark) => {
 
 // Flow control of the game
 const flowControl = (() => {
-
+    const modalBox = document.querySelector('.modal');
     // Modal box after finishing the game
     window.addEventListener('click', function(e) {
         if (e.target == modalBox) {
@@ -128,7 +124,7 @@ const flowControl = (() => {
             }
             const chosenSquare = document.getElementById(`${square.id}`);
             let squareTextBox = chosenSquare.firstElementChild;
-
+            const gameBoardContent = document.querySelector('.game-board');
             if (currentMark === markP1 && !squareTextBox.textContent) {
                 gameBoardContent.style.pointerEvents = 'auto';
                 gameBoard.populateBoard(square.id, markP1, squareTextBox);
@@ -174,6 +170,7 @@ const computerPlayer = (() => {
     const move = () => {
         if (gameBoard.anyAvailableMoves()) {
             const squares = document.getElementsByClassName('square');
+            const gameBoardContent = document.querySelector('.game-board');
             for (let i = 0; i < Object.keys(gameBoard.self.board).length; i++) {
                 console.log(gameBoard.self.board)
                 if (gameBoard.self.board[i + 1] === '') {
