@@ -25,11 +25,39 @@ const gameBoard = (() => {
             self.board[3] === mark && self.board[5] === mark && self.board[7] === mark 
             ) {
                 displayWinner(player.getUsername());
+                return player.getMark();
             } else if (!anyAvailableMoves()) {
                 displayWinner();
+                return 'tie';
             };
     };
 
+    const checkEndMiniMax = () => {
+        if (self.board[1] === 'X' && self.board[2] === 'X' && self.board[3] === 'X' ||
+            self.board[4] === 'X' && self.board[5] === 'X' && self.board[6] === 'X' ||
+            self.board[7] === 'X' && self.board[8] === 'X' && self.board[9] === 'X' ||
+            self.board[1] === 'X' && self.board[4] === 'X' && self.board[7] === 'X' ||
+            self.board[2] === 'X' && self.board[5] === 'X' && self.board[8] === 'X' ||
+            self.board[1] === 'X' && self.board[5] === 'X' && self.board[9] === 'X' ||
+            self.board[3] === 'X' && self.board[6] === 'X' && self.board[9] === 'X' ||
+            self.board[3] === 'X' && self.board[5] === 'X' && self.board[7] === 'X' 
+            ) {
+                return 'X';
+            } else if (
+                self.board[1] === 'O' && self.board[2] === 'O' && self.board[3] === 'O' ||
+                self.board[4] === 'O' && self.board[5] === 'O' && self.board[6] === 'O' ||
+                self.board[7] === 'O' && self.board[8] === 'O' && self.board[9] === 'O' ||
+                self.board[1] === 'O' && self.board[4] === 'O' && self.board[7] === 'O' ||
+                self.board[2] === 'O' && self.board[5] === 'O' && self.board[8] === 'O' ||
+                self.board[1] === 'O' && self.board[5] === 'O' && self.board[9] === 'O' ||
+                self.board[3] === 'O' && self.board[6] === 'O' && self.board[9] === 'O' ||
+                self.board[3] === 'O' && self.board[5] === 'O' && self.board[7] === 'O'
+            ) {
+                return 'O';
+            } else if (!anyAvailableMoves()) {
+                return 'tie';
+            }
+    };
 
     const clearBoard = () => {
         const squares = document.getElementsByClassName('square');
@@ -74,10 +102,11 @@ const gameBoard = (() => {
         }
     }
 
-    return { populateBoard, checkEnd, clearAll, checkGameStatus, anyAvailableMoves, self };
+    return { populateBoard, checkEnd, clearAll, checkGameStatus, anyAvailableMoves, self, checkEndMiniMax };
 })();
 
 console.log(gameBoard.board)
+
 // Player factory function
 const Player = (username, mark) => {
     const getUsername = () => username;
@@ -148,62 +177,89 @@ const flowControl = (() => {
 // const computerPlayer = (() => {
 //     const move = () => {
 //         if (gameBoard.anyAvailableMoves()) {
-//             const squares = document.getElementsByClassName('square');
-//             let randomInt = getRandomInt(0, 8);
-//             while (squares[randomInt].firstElementChild.textContent) {
-//                 randomInt = getRandomInt(0, 8);
-//             }
-//             squares[randomInt].firstElementChild.click();
-//         }
-    
-//     }
-    
-//     const getRandomInt = (min, max) => {
-//         return Math.floor(Math.random() * (max - min + 1) + min);  
-//     }
+//             bestMove();
+//         }}
 //     return { move }
 // })();
+
+// function bestMove() {
+//     const squares = document.getElementsByClassName('square');
+//     const gameBoardContent = document.querySelector('.game-board');
+//     for (let i = 0; i < Object.keys(gameBoard.self.board).length; i++) {
+//         if (gameBoard.self.board[i + 1] === '') {
+//                     self.board[field] = mark;
+//             gameBoardContent.style.pointerEvents = 'auto';
+//             break;
+//         }
+// }}
 
 
 // Computer player minimax
 const computerPlayer = (() => {
     const move = () => {
         if (gameBoard.anyAvailableMoves()) {
-            const squares = document.getElementsByClassName('square');
-            const gameBoardContent = document.querySelector('.game-board');
-            for (let i = 0; i < Object.keys(gameBoard.self.board).length; i++) {
-                console.log(gameBoard.self.board)
-                if (gameBoard.self.board[i + 1] === '') {
-                    squares[i].click();
-                    gameBoardContent.style.pointerEvents = 'auto';
-                    break;
-                }
-        }}}
+            bestMove();
+        }}
     return { move }
 })();
 
-// // Minmax algorithm
-// function minimax(position, depth, maximizingPlayer) {
-//     if (depth === 0) {
-//         return position;
-//     } 
-//     if (maximizingPlayer) {
-//         let maxEval = -Infinity;
-//         for (let i = 0; i < position.length; i++) {
-//             evaluation = minimax(position[i], depth - 1, false);
-//             maxEval = Math.max(maxEval, evaluation);
-//         }
-//         return maxEval;
-//     }
+function bestMove() {
+    const squares = document.getElementsByClassName('square');
+    const gameBoardContent = document.querySelector('.game-board');
+    let move;
+    let bestScore = -Infinity;
+    for (let i = 0; i < Object.keys(gameBoard.self.board).length; i++) {
+        if (gameBoard.self.board[i + 1] === '') {
+            gameBoard.self.board[i + 1] = 'O';
+            let score = minimax(gameBoard.self.board, 0, false);
+            console.log(score)
+            gameBoard.self.board[i + 1] = '';
+            if (score > bestScore) {
+                bestScore = score;
+                move = i;
+            }
 
-//     else {
-//         let minEval = Infinity;
-//         for (let i = 0; i < position.length; i++) {
-//             evaluation = minimax(position[i], depth - 1, true);
-//             maxEval = Math.min(minEval, evaluation);
-//         }
-//         return minEval
-//     }
-// }
+        }
+    }
+    squares[move].click();
+    gameBoardContent.style.pointerEvents = 'auto';
+}
 
-// console.log(minimax([1, 2, 3, 4, 5, 6, 7, 8], 1, true))
+// Minmax algorithm
+function minimax(board, depth, isMaximizing) {
+    let scores = {
+        X: 1,
+        O: -1,
+        tie: 0
+    };
+    let result = gameBoard.checkEndMiniMax();
+    if (result != null) {
+        return scores[result];
+    }
+
+    if (isMaximizing) {
+        let bestScore = -Infinity;
+        for (let i = 0; i < Object.keys(board).length; i++) {
+            if (board[i + 1] === '') {
+                board[i + 1] = 'O';
+                let score = minimax(board, depth + 1, false)
+                board[i + 1] = '';
+                bestScore = Math.max(score, bestScore)
+              }
+            }
+        return bestScore;
+        } else {
+            let bestScore = Infinity;
+            for (let i = 0; i < Object.keys(board).length; i++) {
+                if (board[i + 1] === '') {
+                    board[i + 1] = 'X';
+                    let score = minimax(board, depth + 1, true)
+                    board[i + 1] = '';
+                    bestScore = Math.min(score, bestScore)
+                  }
+                }
+            return bestScore;
+        }
+}
+
+
