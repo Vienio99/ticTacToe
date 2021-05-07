@@ -207,15 +207,15 @@ function bestMove() {
     const squares = document.getElementsByClassName('square');
     const gameBoardContent = document.querySelector('.game-board');
     let move;
-    let bestScore = -Infinity;
+    let bestScore = Infinity;
     for (let i = 0; i < Object.keys(gameBoard.self.board).length; i++) {
         if (gameBoard.self.board[i + 1] === '') {
             gameBoard.self.board[i + 1] = 'O';
             let score = minimax(gameBoard.self.board, 0, false);
-            console.log(score)
             gameBoard.self.board[i + 1] = '';
-            if (score > bestScore) {
+            if (score < bestScore) {
                 bestScore = score;
+                console.log(bestScore)
                 move = i;
             }
 
