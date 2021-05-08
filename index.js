@@ -172,28 +172,6 @@ const flowControl = (() => {
     })
 })();
 
-// Computer player logic
-
-// const computerPlayer = (() => {
-//     const move = () => {
-//         if (gameBoard.anyAvailableMoves()) {
-//             bestMove();
-//         }}
-//     return { move }
-// })();
-
-// function bestMove() {
-//     const squares = document.getElementsByClassName('square');
-//     const gameBoardContent = document.querySelector('.game-board');
-//     for (let i = 0; i < Object.keys(gameBoard.self.board).length; i++) {
-//         if (gameBoard.self.board[i + 1] === '') {
-//                     self.board[field] = mark;
-//             gameBoardContent.style.pointerEvents = 'auto';
-//             break;
-//         }
-// }}
-
-
 // Computer player minimax
 const computerPlayer = (() => {
     const move = () => {
@@ -207,15 +185,14 @@ function bestMove() {
     const squares = document.getElementsByClassName('square');
     const gameBoardContent = document.querySelector('.game-board');
     let move;
-    let bestScore = Infinity;
+    let bestScore = -Infinity;
     for (let i = 0; i < Object.keys(gameBoard.self.board).length; i++) {
         if (gameBoard.self.board[i + 1] === '') {
             gameBoard.self.board[i + 1] = 'O';
             let score = minimax(gameBoard.self.board, 0, false);
             gameBoard.self.board[i + 1] = '';
-            if (score < bestScore) {
+            if (score > bestScore) {
                 bestScore = score;
-                console.log(bestScore)
                 move = i;
             }
 
@@ -228,8 +205,8 @@ function bestMove() {
 // Minmax algorithm
 function minimax(board, depth, isMaximizing) {
     let scores = {
-        X: 1,
-        O: -1,
+        X: -1,
+        O: 1,
         tie: 0
     };
     let result = gameBoard.checkEndMiniMax();
