@@ -14,6 +14,7 @@ const gameBoard = (() => {
         textBox.textContent = mark;
     };
 
+    // Checking end of the game in general
     const checkEnd = (mark, player) => {
         if (self.board[1] === mark && self.board[2] === mark && self.board[3] === mark ||
             self.board[4] === mark && self.board[5] === mark && self.board[6] === mark ||
@@ -31,7 +32,8 @@ const gameBoard = (() => {
                 return 'tie';
             };
     };
-
+    
+    // Checking end of the game in minimax function
     const checkEndMiniMax = () => {
         if (self.board[1] === 'X' && self.board[2] === 'X' && self.board[3] === 'X' ||
             self.board[4] === 'X' && self.board[5] === 'X' && self.board[6] === 'X' ||
@@ -105,7 +107,6 @@ const gameBoard = (() => {
     return { populateBoard, checkEnd, clearAll, checkGameStatus, anyAvailableMoves, self, checkEndMiniMax };
 })();
 
-console.log(gameBoard.board)
 
 // Player factory function
 const Player = (username, mark) => {
@@ -146,11 +147,6 @@ const flowControl = (() => {
 
     Array.from(squares).forEach((square) => {
         square.addEventListener('click', () => {
-
-            if (!gameBoard.anyAvailableMoves()) {
-                gameBoard.clearAll();
-                currentMark = markP1;
-            }
             const chosenSquare = document.getElementById(`${square.id}`);
             let squareTextBox = chosenSquare.firstElementChild;
             const gameBoardContent = document.querySelector('.game-board');
@@ -172,71 +168,78 @@ const flowControl = (() => {
     })
 })();
 
-// Computer player minimax
+// Computer player
 const computerPlayer = (() => {
+
+    // Minimax algorithm
+    function minimax(board, depth, isMaximizing) {
+        let scores = {
+            X: -1,
+            O: 1,
+            tie: 0
+        };
+        let result = gameBoard.checkEndMiniMax();
+        if (result != null) {
+            return scores[result];
+        }
+
+        if (isMaximizing) {
+            let bestScore = -Infinity;
+            for (let i = 0; i < Object.keys(board).length; i++) {
+                if (board[i + 1] === '') {
+                    board[i + 1] = 'O';
+                    let score = minimax(board, depth + 1, false)
+                    board[i + 1] = '';
+                    bestScore = Math.max(score, bestScore)
+                }
+                }
+            return bestScore;
+            } else {
+                let bestScore = Infinity;
+                for (let i = 0; i < Object.keys(board).length; i++) {
+                    if (board[i + 1] === '') {
+                        board[i + 1] = 'X';
+                        let score = minimax(board, depth + 1, true)
+                        board[i + 1] = '';
+                        bestScore = Math.min(score, bestScore)
+                    }
+                    }
+                return bestScore;
+            }
+}
+
+
+    // Calculating best move
+    function bestMove() {
+        const squares = document.getElementsByClassName('square');
+        const gameBoardContent = document.querySelector('.game-board');
+        let move;
+        let bestScore = -Infinity;
+        for (let i = 0; i < Object.keys(gameBoard.self.board).length; i++) {
+            if (gameBoard.self.board[i + 1] === '') {
+                gameBoard.self.board[i + 1] = 'O';
+                let score = minimax(gameBoard.self.board, 0, false);
+                gameBoard.self.board[i + 1] = '';
+                if (score > bestScore) {
+                    bestScore = score;
+                    move = i;
+                }
+    
+            }
+        }
+        squares[move].click();
+        gameBoardContent.style.pointerEvents = 'auto';
+    }
+
     const move = () => {
         if (gameBoard.anyAvailableMoves()) {
             bestMove();
         }}
+
+
+        
     return { move }
 })();
 
-function bestMove() {
-    const squares = document.getElementsByClassName('square');
-    const gameBoardContent = document.querySelector('.game-board');
-    let move;
-    let bestScore = -Infinity;
-    for (let i = 0; i < Object.keys(gameBoard.self.board).length; i++) {
-        if (gameBoard.self.board[i + 1] === '') {
-            gameBoard.self.board[i + 1] = 'O';
-            let score = minimax(gameBoard.self.board, 0, false);
-            gameBoard.self.board[i + 1] = '';
-            if (score > bestScore) {
-                bestScore = score;
-                move = i;
-            }
-
-        }
-    }
-    squares[move].click();
-    gameBoardContent.style.pointerEvents = 'auto';
-}
-
-// Minmax algorithm
-function minimax(board, depth, isMaximizing) {
-    let scores = {
-        X: -1,
-        O: 1,
-        tie: 0
-    };
-    let result = gameBoard.checkEndMiniMax();
-    if (result != null) {
-        return scores[result];
-    }
-
-    if (isMaximizing) {
-        let bestScore = -Infinity;
-        for (let i = 0; i < Object.keys(board).length; i++) {
-            if (board[i + 1] === '') {
-                board[i + 1] = 'O';
-                let score = minimax(board, depth + 1, false)
-                board[i + 1] = '';
-                bestScore = Math.max(score, bestScore)
-              }
-            }
-        return bestScore;
-        } else {
-            let bestScore = Infinity;
-            for (let i = 0; i < Object.keys(board).length; i++) {
-                if (board[i + 1] === '') {
-                    board[i + 1] = 'X';
-                    let score = minimax(board, depth + 1, true)
-                    board[i + 1] = '';
-                    bestScore = Math.min(score, bestScore)
-                  }
-                }
-            return bestScore;
-        }
-}
 
 
